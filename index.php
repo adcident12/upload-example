@@ -77,6 +77,7 @@
                     <div class="col-md-12">
                         <button type="button" class="btn btn-primary mt-3" id="btn-upload-form">upload</button>
                     </div>
+                    <div class="col-md-12 mt-3" id="list-file"></div>
                 </form>
             </div>
         </div>
@@ -87,8 +88,24 @@
         Dropzone.autoDiscover = false;
 
         $(document).ready(function() {
-            initDropzone()
+            initDropzone();
+            getListFile(renderList);
         });
+
+        function getListFile(callbackRender) {
+            $.ajax({
+                type: 'POST',
+                url: '<?= (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; ?>get_all_file.php',
+                dataType: 'json',
+                success: function(rs) {
+                    if (rs.status === "success" && rs.list.length > 0) {
+                        callbackRender(rs.list);
+                    } else {
+                        $("#list-file .alert").remove();
+                    }
+                }
+            });
+        }
 
         var tmpArrayCheck = [];
 
@@ -106,7 +123,7 @@
                 maxFilesize: 2000000,
                 clickable: true,
                 // Language Strings
-                url: 'https://upload-example.test/upload.php',
+                url: '<?= (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; ?>upload.php',
                 init: function() {
                     myDropzone = this;
                     $("#btn-upload-form").click(function(e) {
@@ -117,7 +134,7 @@
                         } else {
                             if (fileRow < 1) {
                                 Swal.fire({
-                                    position: 'center',
+                                    position: 'top-end',
                                     icon: 'error',
                                     title: 'Something went wrong!',
                                     showConfirmButton: false,
@@ -126,7 +143,7 @@
                                 return false;
                             } else {
                                 Swal.fire({
-                                    position: 'center',
+                                    position: 'top-end',
                                     icon: 'error',
                                     title: 'Something went wrong!',
                                     showConfirmButton: false,
@@ -167,7 +184,7 @@
                     let json = $.parseJSON(response);
                     if (json.status === "success") {
                         Swal.fire({
-                            position: 'center',
+                            position: 'top-end',
                             icon: 'success',
                             title: 'Your work has been saved',
                             showConfirmButton: false,
@@ -175,11 +192,12 @@
                         }).then((result) => {
                             if (result.dismiss === Swal.DismissReason.timer) {
                                 // console.log('I was closed by the timer');
+                                getListFile(renderList);
                             }
                         });
                     } else {
                         Swal.fire({
-                            position: 'center',
+                            position: 'top-end',
                             icon: 'error',
                             title: 'Your work has been saved',
                             showConfirmButton: false,
@@ -187,6 +205,7 @@
                         }).then((result) => {
                             if (result.dismiss === Swal.DismissReason.timer) {
                                 // console.log('I was closed by the timer');
+                                getListFile(renderList);
                             }
                         });
                     }
@@ -201,6 +220,71 @@
                     $("#imageUpload").removeClass("dz-started");
                     this.removeAllFiles(true);
                 },
+            });
+        }
+
+        function renderList(rs) {
+            let html_ = "";
+            $.each(rs, function(index, item) {
+                html_ += `<div class="alert alert-light" role="alert">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <a class="icon-link" href="${item.full_path}" target="_blank">
+                                        ${item.file_name}
+                                    </a>
+                                </div>
+                                <div class="col-md-3">${item.date}</div>
+                                <div class="col-md-2">${item.type}</div>
+                                <div class="col-md-2">${item.size}</div>
+                                <div class="col-md-2">
+                                    <div class="badge text-bg-danger p-2 remove-file" style="cursor:pointer" data-filename="${item.file_name}">remove</div>
+                                </div>
+                            </div>
+                        </div>`;
+            });
+            $("#list-file").html(html_);
+            removeFile();
+        }
+
+        function removeFile() {
+            $(".remove-file").unbind("click");
+            $(".remove-file").click(function() {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '<?= (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; ?>delete_file.php',
+                            data: {
+                                'file_name': $(this).data('filename'),
+                            },
+                            dataType: 'json',
+                            success: function(rs) {
+                                if (rs.status === "success") {
+                                    Swal.fire(
+                                        'Deleted!',
+                                        'Your file has been deleted.',
+                                        'success'
+                                    )
+                                    getListFile(renderList);
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops...',
+                                        text: 'Something went wrong!',
+                                    })
+                                }
+                            }
+                        });
+                    }
+                })
             });
         }
     </script>

@@ -3,7 +3,7 @@
 require './upload_compress.php';
 
 $return_array = array();
-$return_array['status'] = "fial";
+$return_array['status'] = "fail";
 
 $width = isset($_POST['width']) ? $_POST['width'] : "";
 $height = isset($_POST['height']) ? $_POST['height'] : "";
