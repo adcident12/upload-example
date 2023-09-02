@@ -55,21 +55,21 @@
                         </label>
                     </div>
                     <div class="row g-3 align-items-center mt-1">
-                        <div class="col-auto">
+                        <div class="col-md-auto col-xs-12">
                             <div class="form-floating">
                                 <input type="text" id="width" class="form-control" name="width" value="1280" placeholder="width">
                                 <label for="width">width</label>
                             </div>
                         </div>
-                        <div class="col-auto">
+                        <div class="col-md-auto col-xs-12">
                             <div class="form-floating">
                                 <input type="text" id="height" class="form-control" name="height" value="1280" placeholder="height">
                                 <label for="height">height</label>
                             </div>
                         </div>
-                        <div class="col-auto">
+                        <div class="col-md-auto col-xs-12">
                             <div class="form-floating">
-                                <input type="text" id="quality" class="form-control" name="quality" value="100" placeholder="quality">
+                                <input type="text" id="quality" class="form-control" name="quality" value="100" placeholder="quality" onkeypress="return onlyNumberKey(event)">
                                 <label for="quality">quality</label>
                             </div>
                         </div>
@@ -288,6 +288,13 @@
                     }
                 })
             });
+        }
+
+        function onlyNumberKey(evt) {
+            var ASCIICode = (evt.which) ? evt.which : evt.keyCode
+            if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57))
+                return false;
+            return true;
         }
     </script>
 </body>
