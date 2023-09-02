@@ -56,22 +56,22 @@
                     </div>
                     <div class="row g-3 align-items-center mt-1">
                         <div class="col-auto">
-                            <label for="width" class="col-form-label">width</label>
+                            <div class="form-floating">
+                                <input type="text" id="width" class="form-control" name="width" value="1280" placeholder="width">
+                                <label for="width">width</label>
+                            </div>
                         </div>
                         <div class="col-auto">
-                            <input type="text" id="width" class="form-control" name="width" value="1280">
+                            <div class="form-floating">
+                                <input type="text" id="height" class="form-control" name="height" value="1280" placeholder="height">
+                                <label for="height">height</label>
+                            </div>
                         </div>
                         <div class="col-auto">
-                            <label for="height" class="col-form-label">height</label>
-                        </div>
-                        <div class="col-auto">
-                            <input type="text" id="height" class="form-control" name="height" value="1280">
-                        </div>
-                        <div class="col-auto">
-                            <label for="quality" class="col-form-label">quality</label>
-                        </div>
-                        <div class="col-auto">
-                            <input type="text" id="quality" class="form-control" name="quality" value="100">
+                            <div class="form-floating">
+                                <input type="text" id="quality" class="form-control" name="quality" value="100" placeholder="quality">
+                                <label for="quality">quality</label>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-12">
@@ -229,12 +229,14 @@
                 html_ += `<div class="alert alert-light" role="alert">
                             <div class="row">
                                 <div class="col-md-3">
-                                    <a class="icon-link" href="${item.full_path}" target="_blank">
+                                    <a class="icon-link text-break" href="${item.full_path}" target="_blank">
                                         ${item.file_name}
                                     </a>
                                 </div>
                                 <div class="col-md-3">${item.date}</div>
-                                <div class="col-md-2">${item.type}</div>
+                                <div class="col-md-2">
+                                    <span class="text-uppercase">${item.type}</span>
+                                </div>
                                 <div class="col-md-2">${item.size}</div>
                                 <div class="col-md-2">
                                     <div class="badge text-bg-danger p-2 remove-file" style="cursor:pointer" data-filename="${item.file_name}">remove</div>

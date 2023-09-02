@@ -10,6 +10,10 @@ $height = isset($_POST['height']) ? $_POST['height'] : "";
 $method = isset($_POST['method']) ? $_POST['method'] : "";
 $quality = isset($_POST['quality']) ? $_POST['quality'] : "";
 
+if (!file_exists('./upload/')) {
+    mkdir('./upload/', 0777, true);
+}
+
 $images = restructureArray($_FILES);
 
 if (!empty($images)) {
